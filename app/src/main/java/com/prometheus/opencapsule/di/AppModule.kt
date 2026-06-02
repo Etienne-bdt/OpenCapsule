@@ -3,7 +3,7 @@ package com.prometheus.opencapsule.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.prometheus.opencapsule.dataclass.dataStore
+import com.prometheus.opencapsule.repository.dataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

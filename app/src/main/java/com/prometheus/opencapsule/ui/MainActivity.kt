@@ -28,6 +28,10 @@ import com.prometheus.opencapsule.ui.theme.OpenCapsuleTheme
 import com.prometheus.opencapsule.viewmodel.CapsuleServiceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +39,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             OpenCapsuleTheme {
-                MainScreen()
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "main") {
+                    composable("main") {
+                        MainScreen(
+                            onNavigateToStyle = { navController.navigate("style") }
+                        )
+                    }
+                    composable("style") {
+                        CapsuleStyleScreen(
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                }
             }
         }
     }
@@ -43,13 +59,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    viewModel: CapsuleServiceViewModel = hiltViewModel(
-        checkNotNull<ViewModelStoreOwner>(
-            LocalViewModelStoreOwner.current
-        ) {
-                "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-            }, null
-    )
+    onNavigateToStyle: () -> Unit,
+    viewModel: CapsuleServiceViewModel = hiltViewModel()
 ) {
     val isEnabled by viewModel.isServiceEnabled.collectAsStateWithLifecycle()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -77,6 +88,12 @@ fun MainScreen(
                 context.startActivity(intent)
             }) {
                 Text(text = "Enable Capsule")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = onNavigateToStyle) {
+                Text(text = "Style Capsule")
             }
         }
     }

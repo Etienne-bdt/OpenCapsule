@@ -1,24 +1,23 @@
 package com.prometheus.opencapsule.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.prometheus.opencapsule.util.isCapsuleServiceRunning
+import com.prometheus.opencapsule.manager.CapsuleUIManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class CapsuleServiceViewModel @Inject constructor(
-    @ApplicationContext private val context: Context
+    private val uiManager: CapsuleUIManager
 ) : ViewModel() {
 
-    private val _isServiceEnabled = MutableStateFlow(isCapsuleServiceRunning(context))
-    val isServiceEnabled: StateFlow<Boolean> = _isServiceEnabled.asStateFlow()
+    val isServiceEnabled = uiManager.isServiceEnabled
+    val uiState = uiManager.uiState
 
     fun updateServiceStatus() {
-        _isServiceEnabled.value = isCapsuleServiceRunning(context)
+        uiManager.updateServiceStatus()
+    }
+
+    fun toggleExpansion() {
+        uiManager.toggleExpansion()
     }
 }
